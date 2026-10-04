@@ -97,7 +97,7 @@ select{font:inherit;font-size:16px;color:var(--tx);background:var(--bg);border:1
 .rail::after{content:"";position:absolute;left:5px;top:10px;width:12px;height:12px;border-radius:50%;background:var(--card);border:2px solid var(--c)}
 .item.bk .rail::after{border-style:dashed}.item.bk{background:linear-gradient(90deg,transparent,var(--bk))}
 .item .x{padding:7px 0 8px}.tx{font-size:14px}.items{padding-bottom:8px}.empty{padding:6px 16px 10px;color:var(--mu);font-size:12px}.folded .items{display:none}
-.nt{margin-top:3px;padding-left:8px;border-left:2px solid var(--c);color:var(--mu);font-size:12px;cursor:inherit}.pls{display:flex;flex-wrap:wrap}.xp{cursor:inherit}
+.nt{margin-top:3px;padding-left:8px;border-left:2px solid var(--c);color:var(--mu);font-size:12px;cursor:inherit}.pls{display:flex;flex-wrap:wrap}.xp{cursor:pointer}
 .chip{display:inline-flex;flex-direction:column;align-items:center;line-height:1.15;padding:4px 10px}.chip small{font-size:11px;opacity:.75}.chip b{font-size:14px;font-weight:600}
 .mo{flex:none;align-self:center;font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.04em;padding:0 2px}
 .nowc{background:var(--ac);color:var(--bg);border-radius:14px;padding:12px 14px;margin-bottom:12px;cursor:pointer}
@@ -132,9 +132,18 @@ select{font:inherit;font-size:16px;color:var(--tx);background:var(--bg);border:1
 .sw-del{position:absolute;right:0;top:0;bottom:0;width:84px;display:flex}.sw-del button{flex:1;border:0;border-radius:0;background:#d64545;color:#fff}
 .cats{display:flex;flex-wrap:wrap;gap:6px}.cc{display:inline-flex;align-items:center;gap:6px;border-radius:16px;padding:6px 12px}.cc.on{border-color:var(--ac);background:var(--bg);box-shadow:0 0 0 1px var(--ac) inset}
 
-#b-cats{padding-bottom:4px}.cxr{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}.capt{font-size:11px;color:var(--mu);padding:4px 0 10px}
+#b-cats{padding-bottom:4px}.cxr{display:flex;flex-wrap:wrap;gap:6px;padding-bottom:2px}.capt{font-size:11px;color:var(--mu);padding:4px 0 10px}
 .cx{flex:none;display:inline-flex;align-items:center;gap:6px;border-radius:16px;padding:4px 11px;font-size:12px;transition:opacity .2s;-webkit-touch-callout:none;user-select:none;-webkit-user-select:none}.cx.off{opacity:.4;text-decoration:line-through}.cx.add,.cc.add{border-style:dashed;color:var(--mu)}
 .er .ex{min-width:0}.er .ex small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.item.skip .t,.item.skip .x{opacity:.5}.item.skip .tx{text-decoration:line-through}.item.skip .rail::after{background:var(--ln);border-color:var(--mu)}
+.sk{display:inline-block;margin-left:8px;font-size:11px;color:var(--mu);text-decoration:none;border:1px solid var(--ln);border-radius:10px;padding:0 7px;vertical-align:1px}.item.skip .sk{opacity:1}
+
+.ver{display:table;margin:18px auto 6px;padding:12px 26px;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:color .2s}.ver.holding{color:var(--ac);opacity:1;transition:color .9s linear}
+#clog{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .25s}#clog.on{opacity:1;pointer-events:auto}
+.clc{width:min(360px,100%);max-height:80vh;overflow:auto;background:var(--card);border-radius:16px;padding:16px 18px 18px;box-shadow:0 10px 36px rgba(0,0,0,.35);transform:translateY(14px) scale(.97);transition:transform .3s cubic-bezier(.22,1,.36,1)}#clog.on .clc{transform:none}
+.clh{display:flex;align-items:center;gap:8px;margin-bottom:8px}.clh b{font-size:16px;font-weight:650}.clh span{font-size:12px;color:var(--mu);font-variant-numeric:tabular-nums}.clh .ib{margin-left:auto}
+.clc ul{margin:0 0 14px;padding-left:18px}.clc li{margin:5px 0;font-size:14px}.clc .pri{width:100%}
 </style></head><body>
 <header><div><h1>Bali Itinerary</h1><div class="sub">Oct 3 – Oct 12<button id="sdot" class="sdot bad" onclick="openSheet('s-sync')" aria-label="Sync status"></button></div></div>
 <div id="hi" style="margin-left:auto"><button class="ib" onclick="goToday()" title="Today" aria-label="Jump to today"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></button></div></header>
@@ -158,9 +167,10 @@ select{font:inherit;font-size:16px;color:var(--tx);background:var(--bg);border:1
 <div class="sheet" id="s-sync"><div class="grab"></div><b>Sync</b><div class="sub" id="stat" style="margin:4px 0 6px">Not synced</div>
 <label class="fl">Google Apps Script link</label><input type="text" id="u" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Paste Google Apps Script URL (ends in /exec)">
 <div class="acts"><button onclick="pull(true)">Sync now</button><button class="pri" onclick="saveUrl()">Save &amp; sync</button></div></div>
+<div id="clog" onclick="if(event.target===this)closeClog()"><div class="clc" id="clc"></div></div>
 <div class="ver" id="ver"></div>
 <script>
-const APP_VERSION="1.10.0";
+const APP_VERSION="1.12.0";
 document.getElementById("ver").textContent="v"+APP_VERSION;
 const D=(d,date,loc,area,color,items)=>({d,date,loc,area,color,items:items.map(i=>({t:i[0],x:i[1],p:i[2]||[],b:i[3]||0}))});
 const DEF=[
@@ -256,7 +266,7 @@ function render(){
 const ti=todayIdx();
 document.getElementById("app").innerHTML=S.map((d,i)=>{const fd=isFold(i),n=d.items.length;
 return `<section class="day c-${d.color||"syd"}${fd?" folded":""}" id="day-${i}"><div class="dh" onclick="foldDay(${i})"><div class="dt"><b>${esc(d.d)} · ${esc(d.date)}</b>${i==ti?'<span class="tb">Today</span>':""}<small>${esc(d.loc)}${fd?" · "+n+" entries":""}</small></div>${wxChip(d)}<button class="ib dm" onclick="event.stopPropagation();openDay(${i})" aria-label="Day settings">${DOTS}</button><span class="chev">${CHEV}</span></div>
-${fd?"":`<div class="items">${d.items.map((it,j)=>`<div class="item${it.b?" bk":""}${j==0?" f":""}${j==n-1?" l":""}" data-i="${i}" data-j="${j}" onclick="rowTap(event,${i},${j})"><div class="t">${esc(it.t)}</div><div class="rail"></div><div class="x"><div class="tx">${esc(it.x)}</div>${it.p.length?'<div class="pls">'+it.p.map(p=>`<a class="pl" target="_blank" rel="noopener" href="${link(p,d.area)}">${PIN}${esc(p)}</a>`).join("")+"</div>":""}${notes(it).filter(Boolean).map(t=>`<div class="nt">${esc(t)}</div>`).join("")}${pillsHtml(it)}</div></div>`).join("")}${n?"":'<div class="empty">No entries yet</div>'}</div>`}</section>`}).join("");
+${fd?"":`<div class="items">${d.items.map((it,j)=>`<div class="item${it.b?" bk":""}${it.skip?" skip":""}${j==0?" f":""}${j==n-1?" l":""}" data-i="${i}" data-j="${j}" onclick="rowTap(event,${i},${j})"><div class="t">${esc(it.t)}</div><div class="rail"></div><div class="x"><div class="tx">${esc(it.x)}${it.skip?'<span class="sk">Didn&#39;t go</span>':""}</div>${it.p.length?'<div class="pls">'+it.p.map(p=>`<a class="pl" target="_blank" rel="noopener" href="${link(p,d.area)}">${PIN}${esc(p)}</a>`).join("")+"</div>":""}${notes(it).filter(Boolean).map(t=>`<div class="nt">${esc(t)}</div>`).join("")}${pillsHtml(it)}</div></div>`).join("")}${n?"":'<div class="empty">No entries yet</div>'}</div>`}</section>`}).join("");
 renderChips(ti);renderNow();
 if(view=="bd")renderBudget();
 }
@@ -346,17 +356,19 @@ g("b-list").innerHTML=keys.map(k=>{const rows=L.filter(e=>e.d==k).sort(cmp);retu
 function rowX(e,id){if(Date.now()-noSw<350)return;const r=e.currentTarget;if(r.classList.contains("open")){r.style.transform="";r.classList.remove("open");return}openExp(id)}
 function delX(id){B=B.filter(e=>e.id!=id);save();render()}
 function jumpX(id){const e=B.find(x=>x.id==id);if(!e)return;for(let i=0;i<S.length;i++){const j=S[i].items.findIndex(it=>it.id&&it.id===e.ref);if(j>=0){tab("it");setTimeout(()=>{goDay(i);openEntry(i,j)},420);return}}}
+function closeOne(id){document.getElementById(id).classList.remove("open");if(![...document.querySelectorAll(".sheet.open")].length)document.getElementById("bk").classList.remove("on")}
+function doneExp(){if(es){closeOne("s-exp");renderEntry();render()}else closeSheets()}
 function openExp(id){xe=id||null;const e=id?B.find(x=>x.id==id):null;xc=e?e.c:"Food & drink";const ti=todayIdx(),dk=e?e.d:(bf||(ti>=0?(S[ti].date||S[ti].d):(S[0]?S[0].date||S[0].d:"")));
 document.getElementById("s-exp").innerHTML=`<div class="grab"></div><b>${e?"Edit expense":"Add expense"}</b>
 <label class="fl">Description</label><input type="text"${NA} id="x-x" value="${e?esc(e.x):""}" placeholder="e.g. Nasi goreng" onkeydown="if(event.key=='Enter')document.getElementById('x-a').focus()">
 <label class="fl">Amount</label><div class="row"><input type="text"${NA} inputmode="decimal" id="x-a" value="${e?e.a:""}" placeholder="0" style="margin:0" onkeydown="if(event.key=='Enter')saveX()"><select id="x-u" style="flex:none;margin:0"><option>IDR</option><option>AUD</option></select></div>
 <label class="fl">Category</label><div class="cats" id="cats">${catChips()}</div>
 ${e&&e.ref?'<div class="sub" style="margin-top:12px">Linked to an itinerary entry</div>':`<label class="fl">Day</label><select id="x-d">${S.map(d=>`<option value="${esc(d.date||d.d)}"${(d.date||d.d)==dk?" selected":""}>${esc(d.d)} · ${esc(d.date)}</option>`).join("")}</select>`}
-<div class="acts">${e?`<button class="ib" onclick="delX(xe);closeSheets()" aria-label="Delete expense" title="Delete">${TRASH}</button>`:""}<button class="pri" onclick="saveX()">${e?"Save":"Add"}</button></div>`;
+<div class="acts">${e?`<button class="ib" onclick="delX(xe);doneExp()" aria-label="Delete expense" title="Delete">${TRASH}</button>`:""}<button class="pri" onclick="saveX()">${e?"Save":"Add"}</button></div>`;
 openSheet("s-exp");if(!e)setTimeout(()=>{const i=document.getElementById("x-x");if(i)i.focus()},350)}
 function pickCat(k){xc=CATS[k][0];[...document.querySelectorAll("#s-exp .cc")].forEach((b,i)=>b.classList.toggle("on",i==k))}
 function saveX(){const a=num(document.getElementById("x-a").value);if(!(a>0))return;const idr=Math.round(document.getElementById("x-u").value=="AUD"?a*rate:a),desc=document.getElementById("x-x").value.trim(),old=xe?B.find(e=>e.id==xe):null,ds=document.getElementById("x-d"),d=old&&old.ref?old.d:(ds&&ds.value)||(old?old.d:"");
-if(old){old.x=desc||xc;old.c=xc;old.a=idr;old.d=d}else B.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,5),d,x:desc||xc,c:xc,a:idr});save();closeSheets()}
+if(old){old.x=desc||xc;old.c=xc;old.a=idr;old.d=d}else B.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,5),d,x:desc||xc,c:xc,a:idr});save();doneExp()}
 function openLim(){document.getElementById("s-lim").innerHTML=`<div class="grab"></div><b>Trip limit</b><label class="fl">Total budget for the trip</label><div class="row"><input type="text"${NA} inputmode="decimal" id="l-a" value="${LIM?f0(LIM):""}" placeholder="Amount" style="margin:0"><select id="l-u" style="flex:none;margin:0"><option>IDR</option><option>AUD</option></select></div><div class="acts">${LIM?'<button onclick="setLim(0)">Remove limit</button>':""}<button class="pri" onclick="setLim()">Save</button></div>`;openSheet("s-lim")}
 function setLim(z){let v=0;if(z!==0){const a=num(document.getElementById("l-a").value);v=Math.round(document.getElementById("l-u").value=="AUD"?a*rate:a)}LIM=v;save();closeSheets()}
 const bcEl=document.getElementById("b-cats");
@@ -394,10 +406,10 @@ let es=null,ds=null,COL={};try{COL=JSON.parse(localStorage.getItem("bali-col"))|
 function isFold(i){const d=S[i],k=d.date||d.d;if(k in COL)return COL[k];const x=dayDate(d);return !!(x&&x<today0())&&i!=todayIdx()}
 function foldDay(i){const d=S[i];COL[d.date||d.d]=!isFold(i);try{localStorage.setItem("bali-col",JSON.stringify(COL))}catch(e){}render()}
 const amt=a=>(bcur=="AUD"?"A$":"Rp ")+fc(a);
-function pillsHtml(it){const h=B.filter(e=>e.ref&&e.ref===it.id).map(e=>`<span class="xp"><span class="dot" style="background:${(CATS.find(c=>c[0]==e.c)||GREY)[1]}"></span>${e.x&&e.x!==it.x?`<span class="xl2">${esc(e.x)}</span>`:""}<b>${amt(e.a)}</b></span>`).join("");return h?`<div class="xps">${h}</div>`:""}
+function pillsHtml(it){const h=B.filter(e=>e.ref&&e.ref===it.id).map(e=>`<span class="xp" data-id="${esc(e.id)}" onclick="event.stopPropagation();openExp(this.dataset.id)"><span class="dot" style="background:${(CATS.find(c=>c[0]==e.c)||GREY)[1]}"></span>${e.x&&e.x!==it.x?`<span class="xl2">${esc(e.x)}</span>`:""}<b>${amt(e.a)}</b></span>`).join("");return h?`<div class="xps">${h}</div>`:""}
 const dirLink=(p,a)=>"https://www.google.com/maps/dir/?api=1&destination="+encodeURIComponent(p+" "+a);
 function renderNow(){const el=document.getElementById("now");if(!el)return;const ti=todayIdx(),nw=new Date(),m=nw.getHours()*60+nw.getMinutes();let h="";
-if(ti>=0){const d=S[ti],nx=d.items.map(it=>({it,q:tmin(it.t)})).find(o=>!o.it.b&&o.q!=null&&o.q>=m);
+if(ti>=0){const d=S[ti],nx=d.items.map(it=>({it,q:tmin(it.t)})).find(o=>!o.it.b&&!o.it.skip&&o.q!=null&&o.q>=m);
 if(nx){const mi=nx.q-m,eta=mi>=60?Math.floor(mi/60)+"h "+(mi%60)+"m":mi+"m",pl=nx.it.p[0];
 h=`<div class="nowc" onclick="goDay(${ti})"><div class="nl">Up next · in ${eta}</div><div class="nm"><b>${esc(nx.it.t)}</b> ${esc(nx.it.x)}</div><div class="nr">${wxChip(d)}${pl?`<a class="dir" onclick="event.stopPropagation()" target="_blank" rel="noopener" href="${dirLink(pl,d.area)}">${NAV}Directions</a>`:""}</div></div>`}
 else h=`<div class="nowc" onclick="goDay(${ti})"><div class="nl">Today</div><div class="nm">Nothing else scheduled today</div><div class="nr">${wxChip(d)}</div></div>`}
@@ -413,8 +425,9 @@ document.getElementById("s-entry").innerHTML=`<div class="grab"></div>
 <div class="row"><input type="text"${NA} value="${esc(it.t)}" placeholder="Time" style="width:96px;flex:none;margin:0" oninput="eSet('t',this.value)"><input type="text"${NA} value="${esc(it.x)}" placeholder="Activity" style="margin:0" oninput="eSet('x',this.value)"></div>
 <label class="fl">Places · become map links</label><input type="text"${NA} value="${esc(it.p.join(", "))}" placeholder="Comma separated" oninput="eSet('p',this.value)">
 <label class="fl">Notes</label>${g.map((t,k)=>`<div class="row"><input type="text"${NA} value="${esc(t)}" placeholder="Note" oninput="eNote(${k},this.value)"><button class="ib" onclick="eNoteDel(${k})" aria-label="Remove note">${XIC}</button></div>`).join("")}<button class="ghost" onclick="eNoteAdd()">+ Add note</button>
-<label class="fl">Expenses</label>${ex.map(e=>`<div class="er"><span class="dot" style="background:${(CATS.find(c=>c[0]==e.c)||GREY)[1]}"></span><div class="ex"><div>${esc(e.x)}</div><small>${esc(e.c)}</small></div><b>${amt(e.a)}</b><button class="ib" data-id="${esc(e.id)}" onclick="eExpDel(this.dataset.id)" aria-label="Remove expense">${XIC}</button></div>`).join("")}
+<label class="fl">Expenses</label>${ex.map(e=>`<div class="er" onclick="openExp('${esc(e.id)}')" style="cursor:pointer"><span class="dot" style="background:${(CATS.find(c=>c[0]==e.c)||GREY)[1]}"></span><div class="ex"><div>${esc(e.x)}</div><small>${esc(e.c)}</small></div><b>${amt(e.a)}</b><button class="ib" data-id="${esc(e.id)}" onclick="event.stopPropagation();eExpDel(this.dataset.id)" aria-label="Remove expense">${XIC}</button></div>`).join("")}
 <div class="ef" style="margin-top:6px"><input type="text"${NA} id="ef-x" placeholder="Description (e.g. Nasi goreng)" onkeydown="if(event.key=='Enter')document.getElementById('ef-a').focus()"><input type="text"${NA} inputmode="decimal" id="ef-a" placeholder="Amount" onkeydown="if(event.key=='Enter')saveEfx()"><select id="ef-u" style="flex:none;min-width:70px"><option>IDR</option><option>AUD</option></select><select id="ef-c">${CATS.map(c=>`<option${c[0]==cg?" selected":""}>${esc(c[0])}</option>`).join("")}</select><button class="pri" onclick="saveEfx()">Add</button></div>
+<label class="tgl"><input type="checkbox" ${it.skip?"checked":""} onchange="eSet('skip',this.checked?1:0)"> Didn't go</label>
 <label class="tgl"><input type="checkbox" ${it.b?"checked":""} onchange="eSet('b',this.checked?1:0)"> Backup plan</label>
 <div class="acts"><button class="ib" onclick="eMove(-1)" aria-label="Move up" title="Move up">${UPI}</button><button class="ib" onclick="eMove(1)" aria-label="Move down" title="Move down">${DNI}</button><button class="ib" onclick="eDel()" aria-label="Delete entry" title="Delete entry">${TRASH}</button><button class="pri" onclick="closeSheets()">Done</button></div>`}
 function eSet(f,v){const it=cur();if(f=="p")it.p=v.split(",").map(s=>s.trim()).filter(Boolean);else it[f]=v;save()}
@@ -452,6 +465,17 @@ document.addEventListener("pointerup",()=>{if(lp){clearTimeout(lp.tm);lp=null}})
 document.addEventListener("touchmove",e=>{if(drag)e.preventDefault()},{passive:false});
 document.getElementById("app").addEventListener("contextmenu",e=>{if(e.target.closest&&e.target.closest(".item"))e.preventDefault()});
 document.addEventListener("pointermove",e=>{if(drag)drag.y=e.clientY});document.addEventListener("pointerup",dragEnd);document.addEventListener("pointercancel",dragEnd);
+const CLOG={"1.12.0":["Hold the version number at the bottom to open this what's-new popup","Close it with the × button, the Close button, or by tapping outside it"],"1.11.0":["Category chips on the Budget tab wrap so all are visible","Edit expenses from the itinerary (tap a pill or open an entry)","Tick 'Didn't go' on an entry to dim and strike it through"]};
+function openClog(){const n=CLOG[APP_VERSION];document.getElementById("clc").innerHTML=`<div class="clh"><b>What's new</b><span>v${APP_VERSION}</span><button class="ib" onclick="closeClog()" aria-label="Close">${XIC}</button></div>${n?`<ul>${n.map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`:'<p class="sub">No notes recorded for this version.</p>'}<button class="pri" onclick="closeClog()">Close</button>`;document.getElementById("clog").classList.add("on");if(navigator.vibrate)navigator.vibrate(10)}
+function closeClog(){document.getElementById("clog").classList.remove("on")}
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeClog()});
+let vt=null;const verEl=document.getElementById("ver");
+function cancelHold(){clearTimeout(vt);vt=null;verEl.classList.remove("holding")}
+verEl.addEventListener("pointerdown",e=>{if(e.pointerType==="mouse"&&e.button!==0)return;cancelHold();verEl._p=[e.clientX,e.clientY];verEl.classList.add("holding");vt=setTimeout(()=>{vt=null;verEl.classList.remove("holding");openClog()},900)});
+verEl.addEventListener("pointermove",e=>{if(vt&&(Math.abs(e.clientX-verEl._p[0])>8||Math.abs(e.clientY-verEl._p[1])>8))cancelHold()});
+["pointerup","pointercancel","pointerleave"].forEach(t=>verEl.addEventListener(t,cancelHold));
+verEl.addEventListener("contextmenu",e=>e.preventDefault());
+addEventListener("scroll",cancelHold,{passive:true});
 render();
 loadWx();
 if(todayIdx()>=0)setTimeout(goToday,300);
